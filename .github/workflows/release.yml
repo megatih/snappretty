@@ -79,6 +79,7 @@ jobs:
           args: --target ${{ matrix.target }}
 
   build-archlinux:
+    needs: build
     strategy:
       fail-fast: false
       matrix:
@@ -134,12 +135,12 @@ jobs:
           sed -i "s|^source=.*|source=()|" PKGBUILD
           sed -i "s|^sha256sums=.*|sha256sums=()|" PKGBUILD
           mkdir -p "$GITHUB_WORKSPACE/dist-pkg"
+          echo "PKGDEST=$GITHUB_WORKSPACE/dist-pkg" >> /etc/makepkg.conf
           chown -R builder:builder /tmp/archpkg "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE/dist-pkg"
-          sudo -u builder env PKGDEST="$GITHUB_WORKSPACE/dist-pkg" makepkg -ef --noconfirm
+          sudo -u builder makepkg -ef --noconfirm
 
       - name: Upload to release
         run: |
-          pkg_file=$(ls dist-pkg/*.pkg.tar.zst)
-          gh release upload "$GITHUB_REF_NAME" "$pkg_file" --clobber
+          gh release upload "$GITHUB_REF_NAME" dist-pkg/*.pkg.tar.zst --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
