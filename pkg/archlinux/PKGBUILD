@@ -1,0 +1,26 @@
+# Maintainer: megatih
+pkgname=snappretty
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Cross-platform screenshot beautifier'
+arch=('x86_64' 'aarch64')
+url='https://github.com/megatih/snappretty'
+license=('MIT')
+depends=('webkit2gtk-4.1' 'gtk3' 'libayatana-appindicator' 'librsvg' 'xdotool')
+makedepends=('rust' 'nodejs' 'npm' 'openssl')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/megatih/snappretty/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname-$pkgver"
+  npm ci
+  npm run tauri:build
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+
+  install -Dm755 "src-tauri/target/release/$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -Dm644 "pkg/archlinux/$pkgname.desktop" "$pkgdir/usr/share/applications/$pkgname.desktop"
+  install -Dm644 "src/assets/$pkgname.png" "$pkgdir/usr/share/pixmaps/$pkgname.png"
+}

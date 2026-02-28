@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=SnapPretty
+Comment=Cross-platform screenshot beautifier
+Exec=snappretty
+Icon=snappretty
+Terminal=false
+Type=Application
+Categories=Graphics;
