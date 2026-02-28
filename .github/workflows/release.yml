@@ -99,8 +99,8 @@ jobs:
     steps:
       - name: Install base dependencies
         run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed \
+          pacman -Syu --noconfirm --disable-sandbox
+          pacman -S --noconfirm --needed --disable-sandbox \
             base-devel \
             git \
             rust \
@@ -133,7 +133,8 @@ jobs:
           # Remove source/checksum lines since we provide the source directly
           sed -i "s|^source=.*|source=()|" PKGBUILD
           sed -i "s|^sha256sums=.*|sha256sums=()|" PKGBUILD
-          chown -R builder:builder /tmp/archpkg "$GITHUB_WORKSPACE"
+          mkdir -p "$GITHUB_WORKSPACE/dist-pkg"
+          chown -R builder:builder /tmp/archpkg "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE/dist-pkg"
           sudo -u builder env PKGDEST="$GITHUB_WORKSPACE/dist-pkg" makepkg -ef --noconfirm
 
       - name: Upload to release
