@@ -85,11 +85,13 @@ jobs:
         include:
           - runner: ubuntu-latest
             arch: x86_64
+            container: archlinux:latest
           - runner: ubuntu-24.04-arm
             arch: aarch64
+            container: menci/archlinuxarm:latest
 
     runs-on: ${{ matrix.runner }}
-    container: archlinux:latest
+    container: ${{ matrix.container }}
 
     permissions:
       contents: write
